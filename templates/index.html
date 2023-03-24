@@ -2,6 +2,15 @@
 
 {% block content %}
     <h1>{% block title %} Welcome to FlaskBlog {% endblock %}</h1>
+    
+    <div>
+        <h3>Peter's playground</h3>
+        <div id="container">
+            <video autoplay="true" id="videoElement">
+            
+            </video>
+        </div>
+    </div>
     {% for post in posts %}
         <a href="{{ url_for('post', post_id=post['id']) }}">
             <h2>{{ post['title'] }}</h2>
