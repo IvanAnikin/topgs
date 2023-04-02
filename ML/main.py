@@ -2,34 +2,77 @@ import cv2
 from PIL import Image
 import os
 import numpy as np
+from masks_dict import masks
+from matplotlib import pyplot as plt
+
+MIN_WIDTH = 40
+MIN_HEIGHT = 40
 
 def launch():
+
     print(f'Path: {os.getcwd()}')
-    img = cv2.imread(f'{os.getcwd()}/static/images/1.webp')
+    img = cv2.imread(f'{os.getcwd()}/static/images/3.jpg') # 1.webp 3.jpg || test1.jpg
 
     img = cv2.resize(img, (600, 480), interpolation=cv2.INTER_AREA)        # it's also possible to use INTER_CUBIC interpolation here
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    # green_mask = [np.array([115, 55, 73]), np.array([125, 100, 31])]
-    green_mask = [np.array([68, 124, 170]), np.array([99, 255, 255])]
+    names_of_mask = masks.keys()
 
-    set_of_masks = [green_mask]
+    for curr_name in names_of_mask:
+        img_cp = img.copy()
 
-    for curr_mask in set_of_masks:
-        cv2.imshow("HSV img", hsv)
+        print(f'curr_name: {curr_name}')
+        curr_mask = masks[curr_name]
+
+        # cv2.imshow("HSV img", hsv)
 
         hsv_blured = cv2.blur(hsv, (5,5))
-        cv2.imshow("HSV blured img", hsv_blured)
+        # cv2.imshow("HSV blured img", hsv_blured)
 
         mask = cv2.inRange(hsv_blured, curr_mask[0], curr_mask[1])
-        cv2.imshow("Green_mask", mask)
+        # cv2.imshow(f'{curr_name}_mask', mask)
 
         mask = cv2.erode(mask, None, iterations=2)
         # cv2.imshow("Eroded_mask", mask)
 
         mask = cv2.dilate(mask, None, iterations=4)
         cv2.imshow("Eroded_dilated__mask", mask)
+
+        contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # find the contours of zone of interests
+        contours = contours[0] # extract only contours from received array
+
+        if contours: # if there is any contours
+            contours = sorted(contours, key=cv2.contourArea, reverse=True)
+            cv2.drawContours(img_cp, contours, 0, (255,0,255), 3) # draw contours on the frame
+
+            (x, y, w, h) = cv2.boundingRect(contours[0]) # size and postition of rectangle that circumcribed around contours
+            if w >= MIN_WIDTH or h >= MIN_HEIGHT:
+                cv2.rectangle(img_cp, (x,y), (x+w, y+h), (0,255,0), 2) # draw rectangle on the frame
+
+        cv2.imshow('contoures_img', img_cp)
+        
+
+        # show some imgs on one plot
+        fig, axs = plt.subplots(1, 4)
+
+        fig.suptitle(f'Applying {curr_name} mask')
+
+        axs[0].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        axs[0].set_title('Image')
+        axs[1].imshow(hsv)
+        axs[1].set_title('Hsv')
+        axs[2].imshow(hsv_blured)
+        axs[2].set_title('Blured')
+        axs[3].imshow(mask) # mask
+        axs[3].set_title('Eroded_dilated')
+
+        for ax in axs:
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.axis('off')
+
+        plt.show()
 
     cv2.imshow('Board1', img)
 
@@ -38,3 +81,4 @@ def launch():
 
 if __name__ == "__main__":
     launch()
+    
