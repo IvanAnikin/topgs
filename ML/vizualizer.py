@@ -6,7 +6,7 @@ import os
 def nothing(x): pass
 
 # Load image
-image = cv2.imread(f'{os.getcwd()}/static/images/1.webp') # cv2.imread('1.jpg')
+image = cv2.imread(f'{os.getcwd()}/static/images/test1.jpg') # 1.webp 2.webp 3.jpg || test1.jpg
 
 image = cv2.resize(image, (1400, 568), interpolation=cv2.INTER_AREA)
 
