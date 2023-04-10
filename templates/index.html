@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Welcome to Top's server {% endblock %}</h1>
     
     <div id="container_video">
         <video autoplay="true" id="videoElement">
         </video>
+        <button id="sendbutton" class="btn btn-primary">Detect</button>
     </div>
 
-    <button id="sendbutton" style="position: absolute; margin-top: auto; margin-left: auto; margin-right: auto;"></button>
     
 {% endblock %}

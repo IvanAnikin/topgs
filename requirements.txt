@@ -1,1 +1,5 @@
 flask
+opencv-python
+matplotlib
+numpy
+Pillow
