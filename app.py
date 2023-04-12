@@ -24,7 +24,9 @@ def detect():
         image = Image.open(BytesIO(image_bytes))
         np_image = np.array(image)
 
-        # detect_led(np_image)
+        output_image = detect_people(np_image)
+
+        
         
     except Exception as e:
         return jsonify({'error': str(e)})

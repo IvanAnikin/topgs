@@ -11,6 +11,16 @@ MIN_WIDTH = 40
 MIN_HEIGHT = 40
 
 
+def detect_people(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    boxes, weights = hog.detectMultiScale(frame, winStride=(8,8) )
+    boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
+    for (xA, yA, xB, yB) in boxes:
+        cv2.rectangle(frame, (xA, yA), (xB, yB),
+                          (0, 255, 0), 2)
+    # out.write(frame.astype('uint8'))
+    return frame
+    
 def detect_led(img):
     
     img = cv2.resize(img, (600, 480), interpolation=cv2.INTER_AREA)        # it's also possible to use INTER_CUBIC interpolation here
